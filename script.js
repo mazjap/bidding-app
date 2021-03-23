@@ -19,33 +19,43 @@ function saveBids(arr) {
 
 function placeBid(player) {
     let bids = getBids();
+    console.log(bids);
 
-    const lastAmount = bids[bids.length - 1].amount;
-    const amount = document.getElementById("text-" + player).value;
+    const lastAmount = bids[bids.length - 1]?.amount ?? 0;
+    const amount = Number(document.getElementById("text-" + player).value);
 
     if (amount > lastAmount) {
-        bids.push(new Bid(amount, player));
-        saveBids(bids);
+        let value;
+        if (!isNaN(Number(amount))) {
+            bids.push(new Bid(amount, player));
+            saveBids(bids);
+        } else {
+            alert("Your input must be a number!");
+        }
     }
 }
 
 function refresh() {
-    const first = document.getElementById("first");
-    const list = document.getElementById("list");
+    const currentBid = document.getElementById("first");
+    const bidList = document.getElementById("list");
 
     let bids = getBids();
 
     if (bids.length > 0) {
-        first.innerText = bids[bids.length - 1].amount + " - Player " + bids[0].playerId;
+        currentBid.innerText = formatAmount(bids[bids.length - 1].amount) + " - Player " + bids[0].playerId;
 
         if (bids.length > 1) {
             let html = "";
 
             for (let i=bids.length - 2; i>-1; i--) {
-                html += `<li>${bids[i].amount}</li>`;
+                html += `<li>$${formatAmount(bids[i].amount)}</li>`;
             }
     
-            list.innerHTML = html
+            bidList.innerHTML = html
         }
     }
+}
+
+function formatAmount(amount) {
+    return (amount * 100 / 100).toFixed(2)
 }
